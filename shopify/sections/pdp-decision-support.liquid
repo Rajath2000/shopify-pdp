@@ -1,0 +1,238 @@
+{% schema %}
+{
+  "name": "Decision Support Quiz",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Not sure if this is right for you?"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Section Subtitle",
+      "default": "Take our 3-step routine finder"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Primary Color",
+      "default": "#2C4C3B"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Decision Support Quiz"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .ka-decision-support {
+    --primary: {{ section.settings.primary_color }};
+    --border: #E5E5E5;
+    --background: #F4F1EB;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .ka-quiz-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    background-color: var(--background);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .ka-quiz-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+  }
+  .ka-quiz-text h3 {
+    font-size: 1.1rem;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+  }
+  .ka-quiz-text p {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  .ka-quiz-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .ka-quiz-modal.is-open {
+    display: flex;
+  }
+  .ka-quiz-content {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    min-height: 400px;
+  }
+  .ka-quiz-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+  .ka-quiz-btn:hover {
+    border-color: var(--primary);
+    background-color: rgba(44, 76, 59, 0.05);
+  }
+</style>
+
+<div class="ka-decision-support">
+  <div class="ka-quiz-card" onclick="openQuiz()">
+    <div class="ka-quiz-text">
+      <h3>{{ section.settings.title }}</h3>
+      <p>{{ section.settings.subtitle }}</p>
+    </div>
+    <div class="ka-chevron">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+  </div>
+</div>
+
+<div class="ka-quiz-modal" id="kaQuizModal">
+  <div class="ka-quiz-content" id="kaQuizContent">
+    <!-- Quiz content dynamically injected by JS -->
+  </div>
+</div>
+
+<script>
+  // This would typically connect to the Next.js API or a Shopify App proxy route.
+  // We mock the API interaction here to demonstrate Shopify functionality standalone.
+  const API_URL = 'https://YOUR_NEXTJS_APP_DOMAIN/api/generate-routine'; 
+  
+  let currentStep = 0;
+  let answers = { primaryGoal: '', skinType: '', familiarity: '' };
+  
+  const questions = [
+    {
+      key: 'primaryGoal',
+      title: 'What is your primary skincare goal?',
+      options: [
+        { label: 'Radiant Glow', value: 'glow' },
+        { label: 'Anti-aging', value: 'anti-aging' },
+        { label: 'Deep Hydration', value: 'hydration' },
+        { label: 'Reduce Pigmentation', value: 'pigmentation' }
+      ]
+    },
+    {
+      key: 'skinType',
+      title: 'How would you describe your skin type?',
+      options: [
+        { label: 'Dry', value: 'dry' },
+        { label: 'Oily', value: 'oily' },
+        { label: 'Combination', value: 'combination' },
+        { label: 'Sensitive', value: 'sensitive' }
+      ]
+    },
+    {
+      key: 'familiarity',
+      title: 'How familiar are you with Ayurvedic routines?',
+      options: [
+        { label: 'Beginner', value: 'beginner' },
+        { label: 'Intermediate', value: 'intermediate' },
+        { label: 'Advanced', value: 'advanced' }
+      ]
+    }
+  ];
+
+  function openQuiz() {
+    document.getElementById('kaQuizModal').classList.add('is-open');
+    renderStep();
+  }
+
+  function closeQuiz() {
+    document.getElementById('kaQuizModal').classList.remove('is-open');
+    currentStep = 0;
+    answers = { primaryGoal: '', skinType: '', familiarity: '' };
+  }
+
+  function handleAnswer(key, value) {
+    answers[key] = value;
+    currentStep++;
+    if (currentStep >= questions.length) {
+      submitQuiz();
+    } else {
+      renderStep();
+    }
+  }
+
+  function submitQuiz() {
+    document.getElementById('kaQuizContent').innerHTML = `
+      <div style="text-align:center; padding: 3rem 0;">
+        <p>Personalizing your routine...</p>
+      </div>
+    `;
+    
+    // Simulate API call for the assignment if actual API isn't hosted
+    setTimeout(() => {
+      renderResults({
+        matchScore: 90,
+        verdict: "Perfect match!",
+        tips: ["Consistency is key."],
+        routine: [
+          { step: 1, timeOfDay: "Night", action: "Apply", description: "Use 2-3 drops." }
+        ]
+      });
+    }, 1000);
+  }
+
+  function renderStep() {
+    const q = questions[currentStep];
+    const html = `
+      <div style="margin-bottom: 2rem;">
+        <button onclick="closeQuiz()" style="background:none;border:none;cursor:pointer;margin-bottom:1rem;">✕ Close</button>
+        <h2>${q.title}</h2>
+      </div>
+      <div>
+        ${q.options.map(opt => `
+          <button class="ka-quiz-btn" onclick="handleAnswer('${q.key}', '${opt.value}')">${opt.label}</button>
+        `).join('')}
+      </div>
+    `;
+    document.getElementById('kaQuizContent').innerHTML = html;
+  }
+
+  function renderResults(result) {
+    const html = `
+      <button onclick="closeQuiz()" style="background:none;border:none;cursor:pointer;margin-bottom:1rem;">✕ Close</button>
+      <h2>${result.matchScore}% Match</h2>
+      <h3>${result.verdict}</h3>
+      <div style="margin: 2rem 0;">
+        ${result.tips.map(tip => `<p>✨ ${tip}</p>`).join('')}
+      </div>
+      <div>
+        <h4>Your Routine</h4>
+        ${result.routine.map(r => `
+          <div style="margin-bottom:1rem;">
+            <strong>${r.timeOfDay} - ${r.action}</strong>
+            <p>${r.description}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    document.getElementById('kaQuizContent').innerHTML = html;
+  }
+</script>
