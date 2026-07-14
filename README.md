@@ -47,11 +47,11 @@ To add this to a Shopify store:
 
 ## AI-First Workflow Note
 
-As an AI-first product engineer, I actively utilized AI tools (primarily Cursor, Claude 3.5 Sonnet, and GitHub Copilot) to accelerate boilerplate creation, iterate on UI interactions, and manage context across the stack. Here is a breakdown of my AI workflow for this assignment:
+As an AI-first product engineer, I actively utilized AI tools (primarily Antigravity powered by Gemini, and Claude) to accelerate boilerplate creation, iterate on UI interactions, and manage context across the stack. Here is a breakdown of my AI workflow for this assignment:
 
 - **Tools Used & Time Saved**: 
-  - **Cursor / Claude 3.5**: Saved significant time scaffolding the Next.js App Router boilerplate and generating the initial structure for the `PDPEnhancement.module.css`. It was also highly effective in writing the initial Jest test scaffolding.
-  - **Midjourney / Image Generation**: Used for rapidly prototyping a high-quality, premium product hero image for Kumkumadi Tailam without needing to source stock photos.
+  - **Antigravity / Gemini / Claude**: Saved significant time scaffolding the Next.js App Router boilerplate and generating the initial structure for the `PDPEnhancement.module.css`. They were also highly effective in writing the initial Jest test scaffolding and automating the browser-based testing of the React UI.
+  - **Image Generation**: Used for rapidly prototyping a high-quality, premium product hero image for Kumkumadi Tailam without needing to source stock photos.
 
 - **Rejected AI Suggestion**: 
   - The AI strongly suggested initializing the Next.js project with Tailwind CSS (which is the default). I rejected this and opted for vanilla CSS Modules. While Tailwind is fast, using CSS Modules gave me much tighter control over the specific, custom micro-interactions and made translating the CSS into the final Shopify Liquid file cleaner and more portable.
